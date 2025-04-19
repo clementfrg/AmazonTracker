@@ -1,0 +1,35 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"  # Déclenché par un tag versionné comme v1.0.0
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    env:
+      OXYLABS_USERNAME: ${{ secrets.OXYLABS_USERNAME }}
+      OXYLABS_PASSWORD: ${{ secrets.OXYLABS_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build . \
+            --build-arg OXYLABS_USERNAME=${{ secrets.OXYLABS_USERNAME }} \
+            --build-arg OXYLABS_PASSWORD=${{ secrets.OXYLABS_PASSWORD }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          generate_release_notes: true
