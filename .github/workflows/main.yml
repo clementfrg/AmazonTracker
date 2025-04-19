@@ -5,6 +5,9 @@ on:
     tags:
       - "v*.*.*"  # Déclenché par un tag versionné comme v1.0.0
   workflow_dispatch:
+  
+permissions:
+  contents: write
 
 jobs:
   release:
@@ -26,6 +29,8 @@ jobs:
           docker build app/ \
             --build-arg OXYLABS_USERNAME=${{ secrets.OXYLABS_USERNAME }} \
             --build-arg OXYLABS_PASSWORD=${{ secrets.OXYLABS_PASSWORD }}
+
+      
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
