@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build: ./app
+    container_name: amazon_tracker_app
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=amazon
+      - DB_USER=amazon_user
+      - DB_PASSWORD=amazon_pass
+      - OXYLABS_USERNAME=${{ secrets.OXYLABS_USERNAME }}
+      - OXYLABS_PASSWORD=${{ secrets.OXYLABS_PASSWORD }}
+    volumes:
+      - ./app/logs:/app/logs
+    command: ["python", "main.py"]
+
+  db:
+    image: postgres:15
+    container_name: amazon_tracker_db
+    restart: always
+    environment:
+      POSTGRES_DB: amazon
+      POSTGRES_USER: amazon_user
+      POSTGRES_PASSWORD: amazon_pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+  pgadmin-data:
