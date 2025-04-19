@@ -23,7 +23,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build . \
+          docker build app/ \
             --build-arg OXYLABS_USERNAME=${{ secrets.OXYLABS_USERNAME }} \
             --build-arg OXYLABS_PASSWORD=${{ secrets.OXYLABS_PASSWORD }}
 
